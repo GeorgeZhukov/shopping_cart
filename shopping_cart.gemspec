@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = ShoppingCart::VERSION
   s.authors     = ["George Zhukov"]
   s.email       = ["scofield.cross@gmail.com"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of ShoppingCart."
-  s.description = "TODO: Description of ShoppingCart."
+  s.homepage    = "https://github.com/GeorgeZhukov/shopping_cart"
+  s.summary     = "Flexible shopping cart solution for Rails"
+  s.description = "Flexible shopping cart solution for Rails"
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
@@ -19,4 +19,6 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> 4.2.4"
 
   s.add_development_dependency "sqlite3"
+  s.add_development_dependency 'rspec-rails', '~> 3.0'
+  s.add_development_dependency 'factory_girl_rails'
 end
