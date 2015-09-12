@@ -2,7 +2,7 @@ require "shopping_cart/engine"
 require "country_select"
 require "geocoder"
 require "credit_card_validations"
-require "state_machines"
+require 'state_machines-activerecord'
 
 module ShoppingCart
   mattr_accessor :user_class
@@ -15,4 +15,5 @@ module ShoppingCart
   def self.product_class
     @@product_class.constantize
   end
+
 end
