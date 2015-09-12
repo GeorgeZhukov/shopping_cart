@@ -6,6 +6,7 @@ module ShoppingCart
     belongs_to :delivery_service
     belongs_to :credit_card
     has_many :order_items
+
     validates :user, presence: true
 
     default_scope { order(created_at: :desc) }
@@ -22,9 +23,9 @@ module ShoppingCart
 
     state_machine :state, initial: :in_progress do
       before_transition :in_progress => :in_queue, do: :generate_number
-      before_transition any => :in_delivery, do: :take_books
+      before_transition any => :in_delivery, do: :take_products
       after_transition any => :delivered, do: :notify_user
-      after_transition any => :canceled, do: :restore_books
+      after_transition any => :canceled, do: :restore_products
 
       event :checkout do
         transition :in_progress => :in_queue
@@ -66,27 +67,27 @@ module ShoppingCart
       calculate_total_price
     end
 
-    # Decrease books quantity when order sent to custom
-    def take_books
+    # Decrease products quantity when order sent to custom
+    def take_products
       order_items.each do |item|
-        item.book.books_in_stock -= item.quantity
-        item.book.save
+        item.product.in_stock -= item.quantity
+        item.product.save
       end
     end
 
-    def books_count
+    def products_count
       order_items.map(&:quantity).inject(&:+) || 0
     end
 
     def merge(order)
-      order_book_ids = order.order_items.pluck(:book_id)
-      book_ids = order_items.pluck(:book_id)
-      same_books_ids = order_book_ids & book_ids
+      order_product_ids = order.order_items.pluck(:product_id)
+      product_ids = order_items.pluck(:product_id)
+      same_product_ids = order_product_ids & product_ids
 
-      if same_books_ids.empty?
+      if same_product_ids.empty?
         order.move_items_to(self)
       else
-        order.order_items.each {|item| add_book(item.book, item.quantity) } # Todo: maybe destroy items after reassign?
+        order.order_items.each {|item| add_product(item.product, item.quantity) } # Todo: maybe destroy items after reassign?
       end
     end
 
@@ -95,20 +96,20 @@ module ShoppingCart
       calculate_total_price && order.calculate_total_price
     end
 
-    # Restore books quantity when order was canceled
-    def restore_books
+    # Restore products quantity when order was canceled
+    def restore_products
       order_items.each do |item|
-        item.book.books_in_stock += item.quantity
-        item.book.save
+        item.product.in_stock += item.quantity
+        item.product.save
       end
     end
 
-    def add_book(book, quantity=1)
-      order_item = self.order_items.where(book: book).first
+    def add_product(product, quantity=1)
+      order_item = self.order_items.where(product: product).first
       if order_item
         order_item.quantity += quantity
       else
-        order_item = self.order_items.build(book: book, quantity: quantity)
+        order_item = self.order_items.build(product: product, quantity: quantity)
       end
       order_item.update_price!
       order_item.save
@@ -116,13 +117,13 @@ module ShoppingCart
       calculate_total_price
     end
 
-    def calculate_books_price
+    def calculate_products_price
       order_items.map(&:price).inject(&:+) || 0
     end
 
     def calculate_total_price
       reload
-      subtotal = calculate_books_price
+      subtotal = calculate_products_price
       shipping = delivery_service ? delivery_service.price : 0
       self.total_price = subtotal + shipping
       self.save

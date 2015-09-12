@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 module ShoppingCart
-  RSpec.xdescribe Order, type: :model do
+  RSpec.describe Order, type: :model do
     subject { create :shopping_cart_order, delivery_service: nil }
     let(:book) { create :book }
 
@@ -22,60 +22,60 @@ module ShoppingCart
     end
 
     describe "#merge" do
-      let(:order1) { create :order }
-      let(:order2) { create :order }
-      let(:book1) { create :book}
+      let(:order1) { create :shopping_cart_order }
+      let(:order2) { create :shopping_cart_order }
+      let(:book1) { create :book }
       let(:book2) { create :book }
 
       it "calls #move_items_to if no same books" do
-        order1.add_book book1
-        order2.add_book book2
+        order1.add_product book1
+        order2.add_product book2
         expect(order1).to receive(:move_items_to).once
         order2.merge(order1)
       end
 
-      it "calls #add_book for every item if there are same books" do
-        order1.add_book book1
-        order2.add_book book1
-        expect(order2).to receive(:add_book).with(book1, 1).once
+      it "calls #add_product for every item if there are same books" do
+        order1.add_product book1
+        order2.add_product book1
+        expect(order2).to receive(:add_product).with(book1, 1).once
         order2.merge(order1)
       end
     end
 
     describe "#move_items_to" do
-      let(:another_order) { create :order }
+      let(:another_order) { create :shopping_cart_order }
       it "moves order item from one order to another" do
-        subject.add_book book
+        subject.add_product book
         subject.move_items_to another_order
         should be_empty
         expect(another_order).not_to be_empty
       end
 
       it "moves few order items from one order to another" do
-        5.times { subject.add_book create(:book) }
+        5.times { subject.add_product create(:book) }
         subject.move_items_to another_order
         should be_empty
         expect(another_order.order_items.count).to eq 5
       end
 
       it "updates total price" do
-        subject.add_book book
+        subject.add_product book
         expect { subject.move_items_to another_order }.to change{another_order.total_price}.by(book.price)
       end
     end
 
-    describe "#add_book" do
+    describe "#add_product" do
 
       it "creates order item with given book and sets quantity to one by default" do
-        subject.add_book book
+        subject.add_product book
         order_item = OrderItem.first
-        expect(order_item.book).to eq book
+        expect(order_item.product).to eq book
         expect(order_item.quantity).to eq 1
       end
 
       it "increase quantity by one when same book added" do
-        subject.add_book book
-        subject.add_book book
+        subject.add_product book
+        subject.add_product book
         order_item = OrderItem.first
         expect(order_item.quantity).to eq 2
       end
@@ -86,19 +86,19 @@ module ShoppingCart
         end
 
         it "updates to book price" do
-          subject.add_book book
+          subject.add_product book
           expect(subject.total_price).to eq book.price
         end
 
         it "updates to 2x book price" do
-          subject.add_book(book, 2)
+          subject.add_product(book, 2)
           expect(subject.total_price).to eq book.price * 2
         end
 
         it "updates with 2 different books" do
           book2 = create :book
-          subject.add_book book
-          subject.add_book book2
+          subject.add_product book
+          subject.add_product book2
           expect(subject.total_price).to eq book.price + book2.price
         end
       end
@@ -106,23 +106,23 @@ module ShoppingCart
 
     describe "#books_count" do
       it "returns zero if no order items" do
-        expect(subject.books_count).to eq 0
+        expect(subject.products_count).to eq 0
       end
 
       it "returns 1 if one order item with quantity eq to 1" do
-        subject.order_items << create(:order_item, quantity: 1)
-        expect(subject.books_count).to eq 1
+        subject.order_items << create(:shopping_cart_order_item, quantity: 1)
+        expect(subject.products_count).to eq 1
       end
 
       it "returns 2 if one order item with quantity eq to 2" do
-        subject.order_items << create(:order_item, quantity: 2)
-        expect(subject.books_count).to eq 2
+        subject.order_items << create(:shopping_cart_order_item, quantity: 2)
+        expect(subject.products_count).to eq 2
       end
 
       it "returns 8 if one order item with quantity eq to 3 and second eq to 5" do
-        subject.order_items << create(:order_item, quantity: 3)
-        subject.order_items << create(:order_item, quantity: 5)
-        expect(subject.books_count).to eq 8
+        subject.order_items << create(:shopping_cart_order_item, quantity: 3)
+        subject.order_items << create(:shopping_cart_order_item, quantity: 5)
+        expect(subject.products_count).to eq 8
       end
     end
 
@@ -133,7 +133,7 @@ module ShoppingCart
       end
 
       it "returns false when has some order items" do
-        subject.add_book create(:book)
+        subject.add_product create(:book)
         expect(subject).not_to be_empty
       end
     end
@@ -141,11 +141,11 @@ module ShoppingCart
     describe "#clear" do
       before do
         book = create :book
-        delivery_service = create :delivery_service
-        billing_address = create :address
-        shipping_address = create :address
+        delivery_service = create :shopping_cart_delivery_service
+        billing_address = create :shopping_cart_address
+        shipping_address = create :shopping_cart_address
 
-        subject.add_book book
+        subject.add_product book
         subject.delivery_service = delivery_service
         subject.billing_address=billing_address
         subject.shipping_address=shipping_address
@@ -185,17 +185,17 @@ module ShoppingCart
 
     describe "#take_books" do
       it "decrease books quantity by one when one item in order with quantity eq to 1" do
-        subject.add_book book
-        subject.take_books
-        expect {book.reload}.to change { book.books_in_stock }.by(-1)
+        subject.add_product book
+        subject.take_products
+        expect {book.reload}.to change { book.in_stock }.by(-1)
       end
     end
 
-    describe "#restore_books" do
+    describe "#restore_products" do
       it "increase books quantity by one when one item in order with quantity eq to 1" do
-        subject.add_book book
-        subject.restore_books
-        expect {book.reload}.to change { book.books_in_stock }.by(1)
+        subject.add_product book
+        subject.restore_products
+        expect {book.reload}.to change { book.in_stock }.by(1)
       end
     end
 
