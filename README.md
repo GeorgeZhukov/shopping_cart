@@ -13,9 +13,18 @@
   ```
   ShoppingCart.user_class = "User"
   ShoppingCart.product_class = "Book"
-  ShoppingCart.current_user_method(&:current_or_guest_user)
   ```
+3. Add `current_cart` method to `ApplicationController`. Example:
 
-3. Mount routes `mount ShoppingCart::Engine => '/shopping-cart', as: 'shopping_cart'`
-4. Copy and install migrations `rake shopping_cart:install:migrations`
+    ```
+    protected
+    def current_cart
+      current_or_guest_user.cart
+    end
+    ```
+4. Mount routes `mount ShoppingCart::Engine => '/shopping-cart', as: 'shopping_cart'`
+5. Copy and install migrations `rake shopping_cart:install:migrations`
 
+### Demo
+This is a demo bookstore application that uses this engine.
+https://github.com/GeorgeZhukov/my-bookstore

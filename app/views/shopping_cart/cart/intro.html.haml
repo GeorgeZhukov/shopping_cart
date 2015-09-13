@@ -1,0 +1,38 @@
+- if @cart.order_items.exists?
+
+  = form_tag wizard_path, method: :put do
+    %table.table
+      %thead
+        %tr
+          %th=t".book"
+          %th=t".price"
+          %th=t".qty"
+          %th=t".total"
+          %th
+      %tbody
+        - @cart.order_items.each do |order_item|
+          %tr.cart_item
+            = hidden_field_tag("items[][id]", order_item.id)
+            %td
+              = image_tag order_item.product.cover.thumbnail.url
+              = link_to order_item.product_title, ShoppingCart.product_path(order_item.product)
+            %td
+              %span.amount= number_to_currency order_item.product_price
+            %td= number_field_tag("items[][quantity]", order_item.quantity, {min: 1, max: order_item.product_in_stock, class: "input-text qty text"})
+            %td
+              %span.amount= number_to_currency order_item.price
+            %td
+              = link_to remove_item_cart_path(item_id: order_item.id), method: :delete do
+                %i.fa.fa-times
+
+    = link_to (t".empty_cart"), clear_cart_path, method: :delete, class: "btn btn-default"
+
+    %button.btn.btn-default{:type=>"submit"}
+      %i.fa.fa-refresh
+      =t".update"
+
+    %button.btn.btn-primary{:name=>"checkout", :type=>"submit"}
+      =t".checkout"
+      %i.fa.fa-arrow-right
+- else
+  %p.lead= t".your_cart_is_empty"

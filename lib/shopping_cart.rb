@@ -3,10 +3,12 @@ require "country_select"
 require "geocoder"
 require "credit_card_validations"
 require 'state_machines-activerecord'
+require "tilt/haml"
 
 module ShoppingCart
   mattr_accessor :user_class
   mattr_accessor :product_class
+  mattr_accessor :product_path
 
   def self.user_class
     @@user_class.constantize
@@ -14,12 +16,6 @@ module ShoppingCart
 
   def self.product_class
     @@product_class.constantize
-  end
-
-  def self.current_user_method(&block)
-    @current_user = block if block
-    # todo: raise
-    @current_user
   end
 
 end

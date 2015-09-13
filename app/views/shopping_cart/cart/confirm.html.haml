@@ -1,0 +1,83 @@
+= render "steps"
+
+%h4= t".confirm"
+.row
+  .col-md-3
+    .panel.panel-success
+      .panel-heading
+        %h3.panel-title
+          %i.fa.fa-map-marker
+          =t ".shipping_address"
+          %small= link_to (t".edit"), wizard_path(:address)
+      .panel-body
+        %p= @cart.shipping_address.city
+        %p= @cart.shipping_address.zip_code
+        %p= @cart.shipping_address.country_name
+        %p= @cart.shipping_address.phone
+
+  .col-md-3
+    .panel.panel-success
+      .panel-heading
+        %h3.panel-title
+          %i.fa.fa-map-marker
+          =t ".billing_address"
+          %small= link_to (t".edit"), wizard_path(:address)
+      .panel-body
+        %p= @cart.billing_address.city
+        %p= @cart.billing_address.zip_code
+        %p= @cart.billing_address.country_name
+        %p= @cart.billing_address.phone
+
+  .col-md-3
+    .panel.panel-success
+      .panel-heading
+        %h3.panel-title
+          %i.fa.fa-truck
+          = t".delivery"
+          %small= link_to (t".edit"), wizard_path(:delivery)
+      .panel-body
+        %p= @cart.delivery_service.name
+
+
+  .col-md-3
+    .panel.panel-success
+      .panel-heading
+        %h3.panel-title
+          %i.fa.fa-credit-card
+          =t ".credit_card"
+          %small= link_to (t".edit"), wizard_path(:payment)
+      .panel-body
+        %p= secure_credit_card_number(@cart.credit_card.number)
+        %p= "#{@cart.credit_card.expiration_month}/#{@cart.credit_card.expiration_year}"
+
+
+%table.table.table-stripped
+  %thead
+    %tr
+      %th=t".book"
+      %th=t".price"
+      %th=t".qty"
+      %th=t".total"
+  %tbody
+  - @cart.order_items.each do |order_item|
+    %tr.cart_item
+      %td
+        = image_tag order_item.product.cover.thumbnail.url
+        -#= link_to order_item.product_title, order_item.product
+      %td= number_to_currency order_item.product_price
+      %td= order_item.quantity
+      %td= number_to_currency order_item.price
+
+%hr/
+.pull-right
+  = t(".subtotal_price", subtotal: number_to_currency(@cart.calculate_products_price))
+  %br
+  = t(".shipping_price", shipping: number_to_currency(@cart.delivery_service.price))
+.clearfix  
+%hr/
+.pull-right
+  = t(".order_total", total: number_to_currency(@cart.total_price))
+.clearfix
+= link_to wizard_path, class: "btn btn-success btn-lg pull-right", method: :put do
+  %i.fa.fa-credit-card
+  =t".place_order"
