@@ -16,4 +16,10 @@ module ShoppingCart
     @@product_class.constantize
   end
 
+  def self.current_user_method(&block)
+    @current_user = block if block
+    # todo: raise
+    @current_user
+  end
+
 end
