@@ -1,0 +1,20 @@
+- if !@orders.exists?
+  %p.lead= t".no_orders"
+- else
+  %h2= t".in_progress"
+  - if current_or_guest_user.cart.empty?
+    %p.lead= t".shopping_cart_is_empty"
+  - else
+    = render current_or_guest_user.cart
+
+  - if @orders.in_queue.exists?
+    %h2= t".waiting_for_processing"
+    = render partial: "orders", object: @orders.in_queue
+
+  - if @orders.in_delivery.exists?
+    %h2=t".in_delivery"
+    = render partial: "orders", object: @orders.in_delivery
+
+  - if @orders.delivered.exists?
+    %h2=t".delivered"
+    = render partial: "orders", object: @orders.delivered

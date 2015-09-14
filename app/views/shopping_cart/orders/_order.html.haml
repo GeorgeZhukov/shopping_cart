@@ -1,0 +1,19 @@
+%table.table
+  %thead
+    %tr
+      %th=t".book"
+      %th=t".price"
+      %th=t".qty"
+      %th=t".total"
+  %tbody
+    - order.order_items.each do |order_item|
+      %tr
+        %td= link_to order_item.product_title, main_app.book_path(order_item.product)
+        %td= number_to_currency order_item.product_price
+        %td= order_item.quantity
+        %td= number_to_currency order_item.price
+%hr/
+
+%p
+  =t ".order_total"
+  %strong= number_to_currency order.total_price

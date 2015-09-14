@@ -52,7 +52,7 @@ module ShoppingCart
 
     def generate_number
       unless number
-        self.number = "R#{id.to_s.rjust(9, '0')}" # Get order id and fill it to with zeroes
+        self.number = "R#{id.to_s.rjust(9, '0')}" # Get orders id and fill it to with zeroes
         self.save
       end
     end
@@ -67,7 +67,7 @@ module ShoppingCart
       calculate_total_price
     end
 
-    # Decrease products quantity when order sent to custom
+    # Decrease products quantity when orders sent to custom
     def take_products
       order_items.each do |item|
         item.product.in_stock -= item.quantity
@@ -96,7 +96,7 @@ module ShoppingCart
       calculate_total_price && order.calculate_total_price
     end
 
-    # Restore products quantity when order was canceled
+    # Restore products quantity when orders was canceled
     def restore_products
       order_items.each do |item|
         item.product.in_stock += item.quantity

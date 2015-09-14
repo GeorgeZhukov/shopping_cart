@@ -18,7 +18,7 @@ module ShoppingCart
 
     validates :quantity, presence: true
     validates :product, presence: true
-    # validates :order, presence: true
+    # validates :orders, presence: true
 
     delegate :title, :in_stock, :price, to: :product, prefix: true
 

@@ -44,14 +44,14 @@ module ShoppingCart
 
     describe "#move_items_to" do
       let(:another_order) { create :shopping_cart_order }
-      it "moves order item from one order to another" do
+      it "moves orders item from one orders to another" do
         subject.add_product book
         subject.move_items_to another_order
         should be_empty
         expect(another_order).not_to be_empty
       end
 
-      it "moves few order items from one order to another" do
+      it "moves few orders items from one orders to another" do
         5.times { subject.add_product create(:book) }
         subject.move_items_to another_order
         should be_empty
@@ -66,7 +66,7 @@ module ShoppingCart
 
     describe "#add_product" do
 
-      it "creates order item with given book and sets quantity to one by default" do
+      it "creates orders item with given book and sets quantity to one by default" do
         subject.add_product book
         order_item = OrderItem.first
         expect(order_item.product).to eq book
@@ -105,21 +105,21 @@ module ShoppingCart
     end
 
     describe "#books_count" do
-      it "returns zero if no order items" do
+      it "returns zero if no orders items" do
         expect(subject.products_count).to eq 0
       end
 
-      it "returns 1 if one order item with quantity eq to 1" do
+      it "returns 1 if one orders item with quantity eq to 1" do
         subject.order_items << create(:shopping_cart_order_item, quantity: 1)
         expect(subject.products_count).to eq 1
       end
 
-      it "returns 2 if one order item with quantity eq to 2" do
+      it "returns 2 if one orders item with quantity eq to 2" do
         subject.order_items << create(:shopping_cart_order_item, quantity: 2)
         expect(subject.products_count).to eq 2
       end
 
-      it "returns 8 if one order item with quantity eq to 3 and second eq to 5" do
+      it "returns 8 if one orders item with quantity eq to 3 and second eq to 5" do
         subject.order_items << create(:shopping_cart_order_item, quantity: 3)
         subject.order_items << create(:shopping_cart_order_item, quantity: 5)
         expect(subject.products_count).to eq 8
@@ -128,11 +128,11 @@ module ShoppingCart
 
     describe "#empty?" do
 
-      it "returns true when no order items" do
+      it "returns true when no orders items" do
         should be_empty
       end
 
-      it "returns false when has some order items" do
+      it "returns false when has some orders items" do
         subject.add_product create(:book)
         expect(subject).not_to be_empty
       end
@@ -152,7 +152,7 @@ module ShoppingCart
         subject.clear
       end
 
-      it "removes order items" do
+      it "removes orders items" do
         should be_empty
       end
 
@@ -184,7 +184,7 @@ module ShoppingCart
     end
 
     describe "#take_books" do
-      it "decrease books quantity by one when one item in order with quantity eq to 1" do
+      it "decrease books quantity by one when one item in orders with quantity eq to 1" do
         subject.add_product book
         subject.take_products
         expect {book.reload}.to change { book.in_stock }.by(-1)
@@ -192,7 +192,7 @@ module ShoppingCart
     end
 
     describe "#restore_products" do
-      it "increase books quantity by one when one item in order with quantity eq to 1" do
+      it "increase books quantity by one when one item in orders with quantity eq to 1" do
         subject.add_product book
         subject.restore_products
         expect {book.reload}.to change { book.in_stock }.by(1)

@@ -1,0 +1,5 @@
+%h2
+  = t"orders.show.order_number", number: @order.number
+  %small= state_to_text @order.state
+
+= render @order

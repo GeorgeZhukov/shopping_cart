@@ -50,7 +50,7 @@ RSpec.configure do |config|
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
 
-  # Allows RSpec to persist some state between runs in order to support
+  # Allows RSpec to persist some state between runs in orders to support
   # the `--only-failures` and `--next-failure` CLI options. We recommend
   # you configure your source control system to ignore this file.
   config.example_status_persistence_file_path = "spec/examples.txt"
@@ -77,11 +77,11 @@ RSpec.configure do |config|
   # particularly slow.
   config.profile_examples = 10
 
-  # Run specs in random order to surface order dependencies. If you find an
-  # order dependency and want to debug it, you can fix the order by providing
+  # Run specs in random orders to surface orders dependencies. If you find an
+  # orders dependency and want to debug it, you can fix the orders by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = :random
+  config.orders = :random
 
   # Seed global randomization in this process using the `--seed` CLI option.
   # Setting this allows you to use `--seed` to deterministically reproduce

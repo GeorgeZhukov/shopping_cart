@@ -8,6 +8,8 @@ module ShoppingCart
 
     before_action :set_cart
 
+    add_breadcrumb (I18n.t"cart.cart"), :cart_path
+
     def show
       jump_to(:intro) if @cart.empty? and step != :intro
       case step
@@ -74,7 +76,7 @@ module ShoppingCart
     end
 
     def set_cart
-      @cart = current_cart
+      @cart = current_or_guest_user.cart
       init_addresses
       init_credit_card
     end

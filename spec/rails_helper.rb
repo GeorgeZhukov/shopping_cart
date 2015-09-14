@@ -12,6 +12,9 @@ require 'rspec/rails'
 require 'factory_girl_rails'
 require 'faker'
 require 'shoulda-matchers'
+require 'devise'
+require 'support/shopping_cart/controller_macros'
+
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -37,6 +40,14 @@ RSpec.configure do |config|
   config.mock_with :rspec
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
+
+  config.include Warden::Test::Helpers
+  config.before :suite do
+    Warden.test_mode!
+  end
+
+  config.include Devise::TestHelpers, :type => :controller
+  config.extend ShoppingCart::ControllerMacros, :type => :controller
 
   config.include FactoryGirl::Syntax::Methods
 

@@ -3,7 +3,7 @@
 = form_tag wizard_path, method: :put do
   .row
     .col-md-8
-      %h4=t ".delivery"
+      %h4=t "cart.delivery.delivery"
       - @delivery_services.each do |ds|
         = radio_button_tag(:delivery, ds.id, @cart.delivery_service == ds, options={onclick: "calculate_order_price(#{ds.price});"})
         = "#{ds.name} + #{number_to_currency ds.price}"
@@ -12,7 +12,7 @@
       = render "summary", cart: @cart
 
   %button.btn.btn-primary.pull-right{:type=>"submit"}
-    =t".save_and_continue"
+    =t"cart.delivery.save_and_continue"
     %i.fa.fa-arrow-right
   :javascript
     function calculate_order_price(shipping_price){
